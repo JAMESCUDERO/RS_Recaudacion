@@ -72,10 +72,10 @@
   ,CEP.Observacion2
   ,CEP.Observacion3
   ,CEP.ValorRecargo
-FROM [H16].[RECAUDACION].[dbo].[SmrCodigoElectronicoPago] CEP WITH (NOLOCK)
-INNER JOIN [H16].[RECAUDACION].[dbo].[SmrEstados] EST WITH (NOLOCK)
+FROM [SERVIDOR_RECAUDACION].[RECAUDACION].[dbo].[SmrCodigoElectronicoPago] CEP WITH (NOLOCK)
+INNER JOIN [SERVIDOR_RECAUDACION].[RECAUDACION].[dbo].[SmrEstados] EST WITH (NOLOCK)
   ON CEP.Estado = EST.IdEstado
-INNER JOIN [H16].[RECAUDACION].[dbo].[SmrCatalogos] CAT WITH (NOLOCK)
+INNER JOIN [SERVIDOR_RECAUDACION].[RECAUDACION].[dbo].[SmrCatalogos] CAT WITH (NOLOCK)
   ON CEP.CodCatalogo = CAT.CodCatalogo
 WHERE CAST(CEP.CEP AS NVARCHAR(50)) = @CEP</CommandText>
         <Timeout>60</Timeout>
@@ -236,12 +236,12 @@ WHERE CAST(CEP.CEP AS NVARCHAR(50)) = @CEP</CommandText>
   ,CAST(TEM.IdBanco AS NVARCHAR(50))             AS Banco
   ,CAJ.NombreCajero                              AS Cajero
   ,CAST(TEM.[IdApertura] AS NVARCHAR(50))        AS IdApertura
-FROM [H16].[RECAUDACION].[dbo].[SmrCobrosElectronicosTemporales] TEM WITH (NOLOCK)
-INNER JOIN [H16].[RECAUDACION].[dbo].[SmrEstados] EST WITH (NOLOCK)
+FROM [SERVIDOR_RECAUDACION].[RECAUDACION].[dbo].[SmrCobrosElectronicosTemporales] TEM WITH (NOLOCK)
+INNER JOIN [SERVIDOR_RECAUDACION].[RECAUDACION].[dbo].[SmrEstados] EST WITH (NOLOCK)
   ON TEM.Estado = EST.IdEstado
-INNER JOIN [H16].[RECAUDACION].[dbo].[SmrCatalogos] CAT WITH (NOLOCK)
+INNER JOIN [SERVIDOR_RECAUDACION].[RECAUDACION].[dbo].[SmrCatalogos] CAT WITH (NOLOCK)
   ON TEM.CodCatalogo = CAT.CodCatalogo
-INNER JOIN [H16].[RECAUDACION].[dbo].[SmrCajeros] CAJ WITH (NOLOCK)
+INNER JOIN [SERVIDOR_RECAUDACION].[RECAUDACION].[dbo].[SmrCajeros] CAJ WITH (NOLOCK)
   ON TEM.IdCajero = CAJ.IdCajero
 WHERE CAST(TEM.CEP AS NVARCHAR(50)) = @CEP
 ORDER BY TEM.FechaCompensacion DESC</CommandText>

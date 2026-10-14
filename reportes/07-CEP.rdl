@@ -79,10 +79,10 @@
   ,CEP.Observacion3
   ,CEP.ValorDeudaO
   ,CEP.ValorRecargo
-FROM [H16].[RECAUDACION].[dbo].[SmrCodigoElectronicoPago] CEP WITH (NOLOCK)
-INNER JOIN [H16].[RECAUDACION].[dbo].[SmrEstados] EST WITH (NOLOCK)
+FROM [SERVIDOR_RECAUDACION].[RECAUDACION].[dbo].[SmrCodigoElectronicoPago] CEP WITH (NOLOCK)
+INNER JOIN [SERVIDOR_RECAUDACION].[RECAUDACION].[dbo].[SmrEstados] EST WITH (NOLOCK)
   ON CEP.Estado = EST.IdEstado
-INNER JOIN [H16].[RECAUDACION].[dbo].[SmrCatalogos] CAT WITH (NOLOCK)
+INNER JOIN [SERVIDOR_RECAUDACION].[RECAUDACION].[dbo].[SmrCatalogos] CAT WITH (NOLOCK)
   ON CEP.CodCatalogo = CAT.CodCatalogo
 WHERE CEP.PdpEstado = 1
   AND (@CEP = '' OR CEP.CEP = @CEP)
