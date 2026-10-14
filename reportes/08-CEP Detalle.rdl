@@ -1,0 +1,1966 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report MustUnderstand="df" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:df="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition/defaultfontfamily" xmlns:am="http://schemas.microsoft.com/sqlserver/reporting/authoringmetadata">
+  <rd:ReportUnitType>Mm</rd:ReportUnitType>
+  <rd:ReportID>b2c3d4e5-f6a7-8901-bcde-f12345678901</rd:ReportID>
+  <am:AuthoringMetadata>
+    <am:CreatedBy>
+      <am:Name>PBIRB</am:Name>
+      <am:Version>15.7.1815.334</am:Version>
+    </am:CreatedBy>
+    <am:UpdatedBy>
+      <am:Name>PBIRB</am:Name>
+      <am:Version>15.7.1815.334</am:Version>
+    </am:UpdatedBy>
+    <am:LastModifiedTimestamp>2026-05-22T00:00:00.0000000Z</am:LastModifiedTimestamp>
+  </am:AuthoringMetadata>
+  <df:DefaultFontFamily>Segoe UI</df:DefaultFontFamily>
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="RECAUDACION_DM">
+      <rd:SecurityType>Integrated</rd:SecurityType>
+      <ConnectionProperties>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString>Data Source=SERVIDOR_DW;Initial Catalog=RECAUDACION_DM;Integrated Security=True</ConnectString>
+        <IntegratedSecurity>true</IntegratedSecurity>
+      </ConnectionProperties>
+      <rd:DataSourceID>a1b2c3d4-e5f6-7890-abcd-ef1234567890</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="DS_CEP">
+      <Query>
+        <DataSourceName>RECAUDACION_DM</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@CEP">
+            <Value>=Parameters!CEP.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>SELECT TOP 1
+   CAST(CEP.CEP AS NVARCHAR(50))                 AS CEP
+  ,CAT.Descripcion                               AS Catalogo
+  ,CEP.CodAplicacion
+  ,CASE CEP.CodAplicacion
+     WHEN 'SMR' THEN 'SISTEMA DE RECAUDACIONES'
+     ELSE CEP.CodAplicacion
+   END                                           AS NombreAplicacion
+  ,CEP.CodTramite
+  ,CEP.DescripcionTramite
+  ,CEP.AnioTransaccion
+  ,CAST(CEP.NumeroTransaccion AS NVARCHAR(50))   AS NumeroTransaccion
+  ,CEP.FechaTransaccion
+  ,CEP.NumeroIdentificacion
+  ,CEP.NombreContribuyente
+  ,CAST(CEP.IdSector AS NVARCHAR(50))            AS IdSector
+  ,CAST(CEP.Manzana AS NVARCHAR(50))             AS Manzana
+  ,CAST(CEP.Lote AS NVARCHAR(50))                AS Lote
+  ,CAST(CEP.Division AS NVARCHAR(50))            AS Division
+  ,CAST(CEP.Phv AS NVARCHAR(50))                 AS Phv
+  ,CAST(CEP.Phh AS NVARCHAR(50))                 AS Phh
+  ,CAST(CEP.NumeroPredio AS NVARCHAR(50))        AS Numero
+  ,CAST(CEP.IdCobro AS NVARCHAR(50))             AS IdCobro
+  ,CEP.FechaCobro
+  ,CEP.ValorTasa
+  ,CEP.ValorDeuda
+  ,CEP.ValorMulta
+  ,CEP.ValorInteres
+  ,CEP.ValorCoactiva
+  ,CEP.ValorDescuento
+  ,CEP.ValorTotal
+  ,CEP.FechaExigibilidad
+  ,EST.Descripcion                               AS Estado
+  ,CEP.Observacion1
+  ,CEP.Observacion2
+  ,CEP.Observacion3
+  ,CEP.ValorRecargo
+FROM [H16].[RECAUDACION].[dbo].[SmrCodigoElectronicoPago] CEP WITH (NOLOCK)
+INNER JOIN [H16].[RECAUDACION].[dbo].[SmrEstados] EST WITH (NOLOCK)
+  ON CEP.Estado = EST.IdEstado
+INNER JOIN [H16].[RECAUDACION].[dbo].[SmrCatalogos] CAT WITH (NOLOCK)
+  ON CEP.CodCatalogo = CAT.CodCatalogo
+WHERE CAST(CEP.CEP AS NVARCHAR(50)) = @CEP</CommandText>
+        <Timeout>60</Timeout>
+      </Query>
+      <Fields>
+        <Field Name="CEP">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>CEP</DataField>
+        </Field>
+        <Field Name="Catalogo">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>Catalogo</DataField>
+        </Field>
+        <Field Name="CodAplicacion">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>CodAplicacion</DataField>
+        </Field>
+        <Field Name="NombreAplicacion">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>NombreAplicacion</DataField>
+        </Field>
+        <Field Name="CodTramite">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>CodTramite</DataField>
+        </Field>
+        <Field Name="DescripcionTramite">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>DescripcionTramite</DataField>
+        </Field>
+        <Field Name="AnioTransaccion">
+          <rd:TypeName>System.Int32</rd:TypeName>
+          <DataField>AnioTransaccion</DataField>
+        </Field>
+        <Field Name="NumeroTransaccion">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>NumeroTransaccion</DataField>
+        </Field>
+        <Field Name="FechaTransaccion">
+          <rd:TypeName>System.DateTime</rd:TypeName>
+          <DataField>FechaTransaccion</DataField>
+        </Field>
+        <Field Name="NumeroIdentificacion">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>NumeroIdentificacion</DataField>
+        </Field>
+        <Field Name="NombreContribuyente">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>NombreContribuyente</DataField>
+        </Field>
+        <Field Name="IdSector">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>IdSector</DataField>
+        </Field>
+        <Field Name="Manzana">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>Manzana</DataField>
+        </Field>
+        <Field Name="Lote">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>Lote</DataField>
+        </Field>
+        <Field Name="Division">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>Division</DataField>
+        </Field>
+        <Field Name="Phv">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>Phv</DataField>
+        </Field>
+        <Field Name="Phh">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>Phh</DataField>
+        </Field>
+        <Field Name="Numero">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>Numero</DataField>
+        </Field>
+        <Field Name="IdCobro">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>IdCobro</DataField>
+        </Field>
+        <Field Name="FechaCobro">
+          <rd:TypeName>System.DateTime</rd:TypeName>
+          <DataField>FechaCobro</DataField>
+        </Field>
+        <Field Name="ValorTasa">
+          <rd:TypeName>System.Decimal</rd:TypeName>
+          <DataField>ValorTasa</DataField>
+        </Field>
+        <Field Name="ValorDeuda">
+          <rd:TypeName>System.Decimal</rd:TypeName>
+          <DataField>ValorDeuda</DataField>
+        </Field>
+        <Field Name="ValorMulta">
+          <rd:TypeName>System.Decimal</rd:TypeName>
+          <DataField>ValorMulta</DataField>
+        </Field>
+        <Field Name="ValorInteres">
+          <rd:TypeName>System.Decimal</rd:TypeName>
+          <DataField>ValorInteres</DataField>
+        </Field>
+        <Field Name="ValorCoactiva">
+          <rd:TypeName>System.Decimal</rd:TypeName>
+          <DataField>ValorCoactiva</DataField>
+        </Field>
+        <Field Name="ValorDescuento">
+          <rd:TypeName>System.Decimal</rd:TypeName>
+          <DataField>ValorDescuento</DataField>
+        </Field>
+        <Field Name="ValorTotal">
+          <rd:TypeName>System.Decimal</rd:TypeName>
+          <DataField>ValorTotal</DataField>
+        </Field>
+        <Field Name="FechaExigibilidad">
+          <rd:TypeName>System.DateTime</rd:TypeName>
+          <DataField>FechaExigibilidad</DataField>
+        </Field>
+        <Field Name="Estado">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>Estado</DataField>
+        </Field>
+        <Field Name="Observacion1">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>Observacion1</DataField>
+        </Field>
+        <Field Name="Observacion2">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>Observacion2</DataField>
+        </Field>
+        <Field Name="Observacion3">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>Observacion3</DataField>
+        </Field>
+        <Field Name="ValorRecargo">
+          <rd:TypeName>System.Decimal</rd:TypeName>
+          <DataField>ValorRecargo</DataField>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="DS_Temporales">
+      <Query>
+        <DataSourceName>RECAUDACION_DM</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@CEP">
+            <Value>=Parameters!CEP.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>SELECT TOP 200
+   CAST(TEM.[IdCobro] AS NVARCHAR(50))           AS IdCobro
+  ,CAST(TEM.[IdLiquidacion] AS NVARCHAR(50))     AS IdLiquidacion
+  ,EST.Descripcion                               AS Estado
+  ,CAT.Descripcion                               AS Catalogo
+  ,TEM.[FechaCompensacion]
+  ,TEM.[Total]
+  ,TEM.[NombreContribuyente]
+  ,TEM.[FechaReverso]
+  ,TEM.[MotivoReverso]
+  ,CAST(TEM.IdBanco AS NVARCHAR(50))             AS Banco
+  ,CAJ.NombreCajero                              AS Cajero
+  ,CAST(TEM.[IdApertura] AS NVARCHAR(50))        AS IdApertura
+FROM [H16].[RECAUDACION].[dbo].[SmrCobrosElectronicosTemporales] TEM WITH (NOLOCK)
+INNER JOIN [H16].[RECAUDACION].[dbo].[SmrEstados] EST WITH (NOLOCK)
+  ON TEM.Estado = EST.IdEstado
+INNER JOIN [H16].[RECAUDACION].[dbo].[SmrCatalogos] CAT WITH (NOLOCK)
+  ON TEM.CodCatalogo = CAT.CodCatalogo
+INNER JOIN [H16].[RECAUDACION].[dbo].[SmrCajeros] CAJ WITH (NOLOCK)
+  ON TEM.IdCajero = CAJ.IdCajero
+WHERE CAST(TEM.CEP AS NVARCHAR(50)) = @CEP
+ORDER BY TEM.FechaCompensacion DESC</CommandText>
+        <Timeout>60</Timeout>
+      </Query>
+      <Fields>
+        <Field Name="IdCobro">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>IdCobro</DataField>
+        </Field>
+        <Field Name="IdLiquidacion">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>IdLiquidacion</DataField>
+        </Field>
+        <Field Name="Estado">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>Estado</DataField>
+        </Field>
+        <Field Name="Catalogo">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>Catalogo</DataField>
+        </Field>
+        <Field Name="FechaCompensacion">
+          <rd:TypeName>System.DateTime</rd:TypeName>
+          <DataField>FechaCompensacion</DataField>
+        </Field>
+        <Field Name="Total">
+          <rd:TypeName>System.Decimal</rd:TypeName>
+          <DataField>Total</DataField>
+        </Field>
+        <Field Name="NombreContribuyente">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>NombreContribuyente</DataField>
+        </Field>
+        <Field Name="FechaReverso">
+          <rd:TypeName>System.DateTime</rd:TypeName>
+          <DataField>FechaReverso</DataField>
+        </Field>
+        <Field Name="MotivoReverso">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>MotivoReverso</DataField>
+        </Field>
+        <Field Name="Banco">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>Banco</DataField>
+        </Field>
+        <Field Name="Cajero">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>Cajero</DataField>
+        </Field>
+        <Field Name="IdApertura">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>IdApertura</DataField>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+
+          <Textbox Name="ReportTitle">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Código Electrónico de Pago — Detalle</Value>
+                    <Style>
+                      <FontSize>16pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <Color>#1f3864</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>0mm</Top>
+            <Left>0mm</Left>
+            <Height>10mm</Height>
+            <Width>315mm</Width>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Textbox>
+
+          <Textbox Name="Hdr_Transaccion">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Transacción</Value>
+                    <Style>
+                      <FontSize>8pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <Color>White</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>12mm</Top>
+            <Left>0mm</Left>
+            <Height>6mm</Height>
+            <Width>315mm</Width>
+            <Style>
+              <Border><Style>None</Style></Border>
+              <BackgroundColor>#1f3864</BackgroundColor>
+              <PaddingLeft>4pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+
+          <Textbox Name="Lbl_Tran_CodAplicacion">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Código de Aplicación:</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>19mm</Top><Left>0mm</Left><Height>7mm</Height><Width>40mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>#E8EDF4</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Val_Tran_CodAplicacion">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!CodAplicacion.Value, "DS_CEP")</Value>
+                    <Style><FontSize>8pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>19mm</Top><Left>40mm</Left><Height>7mm</Height><Width>22mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>White</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Lbl_Tran_NombreAplicacion">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Nombre de Aplicación:</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>19mm</Top><Left>63mm</Left><Height>7mm</Height><Width>40mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>#E8EDF4</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Val_Tran_NombreAplicacion">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!NombreAplicacion.Value, "DS_CEP")</Value>
+                    <Style><FontSize>8pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>19mm</Top><Left>103mm</Left><Height>7mm</Height><Width>100mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>White</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+
+          <Textbox Name="Lbl_Tran_CodTramite">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Código de Trámite:</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>27mm</Top><Left>0mm</Left><Height>7mm</Height><Width>40mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>#E8EDF4</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Val_Tran_CodTramite">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!CodTramite.Value, "DS_CEP")</Value>
+                    <Style><FontSize>8pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>27mm</Top><Left>40mm</Left><Height>7mm</Height><Width>22mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>White</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Lbl_Tran_DescripcionTramite">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Descripción del Trámite:</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>27mm</Top><Left>63mm</Left><Height>7mm</Height><Width>40mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>#E8EDF4</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Val_Tran_DescripcionTramite">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!DescripcionTramite.Value, "DS_CEP")</Value>
+                    <Style><FontSize>8pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>27mm</Top><Left>103mm</Left><Height>7mm</Height><Width>180mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>White</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+
+          <Textbox Name="Lbl_Tran_Anio">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Año Transacción:</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>35mm</Top><Left>0mm</Left><Height>7mm</Height><Width>40mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>#E8EDF4</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Val_Tran_Anio">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!AnioTransaccion.Value, "DS_CEP")</Value>
+                    <Style><FontSize>8pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Center</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>35mm</Top><Left>40mm</Left><Height>7mm</Height><Width>22mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>White</BackgroundColor>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Lbl_Tran_NumeroTransaccion">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Número Transacción:</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>35mm</Top><Left>63mm</Left><Height>7mm</Height><Width>42mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>#E8EDF4</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Val_Tran_NumeroTransaccion">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!NumeroTransaccion.Value, "DS_CEP")</Value>
+                    <Style><FontSize>8pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>35mm</Top><Left>105mm</Left><Height>7mm</Height><Width>35mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>White</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Lbl_Tran_FechaTransaccion">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Fecha Transacción:</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>35mm</Top><Left>141mm</Left><Height>7mm</Height><Width>40mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>#E8EDF4</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Val_Tran_FechaTransaccion">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=Format(First(Fields!FechaTransaccion.Value, "DS_CEP"), "dd/MM/yyyy")</Value>
+                    <Style><FontSize>8pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Center</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>35mm</Top><Left>181mm</Left><Height>7mm</Height><Width>30mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>White</BackgroundColor>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+
+          <Textbox Name="Hdr_Contribuyente">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Contribuyente</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight><Color>White</Color></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>44mm</Top><Left>0mm</Left><Height>6mm</Height><Width>315mm</Width>
+            <Style>
+              <Border><Style>None</Style></Border>
+              <BackgroundColor>#1f3864</BackgroundColor>
+              <PaddingLeft>4pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+
+          <Textbox Name="Lbl_Cont_Identificacion">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Identificación:</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>51mm</Top><Left>0mm</Left><Height>7mm</Height><Width>30mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>#E8EDF4</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Val_Cont_Identificacion">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!NumeroIdentificacion.Value, "DS_CEP")</Value>
+                    <Style><FontSize>8pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>51mm</Top><Left>30mm</Left><Height>7mm</Height><Width>30mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>White</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Lbl_Cont_NombreCompleto">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Nombre Completo:</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>51mm</Top><Left>62mm</Left><Height>7mm</Height><Width>35mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>#E8EDF4</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Val_Cont_NombreCompleto">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!NombreContribuyente.Value, "DS_CEP")</Value>
+                    <Style><FontSize>8pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>51mm</Top><Left>97mm</Left><Height>7mm</Height><Width>150mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>White</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+
+          <Textbox Name="Hdr_Deuda">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Deuda</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight><Color>White</Color></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>60mm</Top><Left>0mm</Left><Height>6mm</Height><Width>315mm</Width>
+            <Style>
+              <Border><Style>None</Style></Border>
+              <BackgroundColor>#1f3864</BackgroundColor>
+              <PaddingLeft>4pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+
+          <Textbox Name="Lbl_Deu_ValorDeuda">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Valor Deuda:</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>67mm</Top><Left>0mm</Left><Height>7mm</Height><Width>26mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>#E8EDF4</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Val_Deu_ValorDeuda">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="$ " &amp; Format(First(Fields!ValorDeuda.Value, "DS_CEP"), "#,##0.00")</Value>
+                    <Style><FontSize>8pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style><TextAlign>Right</TextAlign></Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>67mm</Top><Left>26mm</Left><Height>7mm</Height><Width>24mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>White</BackgroundColor>
+              <PaddingRight>3pt</PaddingRight>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Lbl_Deu_Descuento">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Descuento:</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>67mm</Top><Left>52mm</Left><Height>7mm</Height><Width>24mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>#E8EDF4</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Val_Deu_Descuento">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="$ " &amp; Format(First(Fields!ValorDescuento.Value, "DS_CEP"), "#,##0.00")</Value>
+                    <Style><FontSize>8pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style><TextAlign>Right</TextAlign></Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>67mm</Top><Left>76mm</Left><Height>7mm</Height><Width>24mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>White</BackgroundColor>
+              <PaddingRight>3pt</PaddingRight>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Lbl_Deu_Interes">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Interés:</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>67mm</Top><Left>102mm</Left><Height>7mm</Height><Width>20mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>#E8EDF4</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Val_Deu_Interes">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="$ " &amp; Format(First(Fields!ValorInteres.Value, "DS_CEP"), "#,##0.00")</Value>
+                    <Style><FontSize>8pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style><TextAlign>Right</TextAlign></Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>67mm</Top><Left>122mm</Left><Height>7mm</Height><Width>24mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>White</BackgroundColor>
+              <PaddingRight>3pt</PaddingRight>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+
+          <Textbox Name="Lbl_Deu_Recargo">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Recargo:</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>75mm</Top><Left>0mm</Left><Height>7mm</Height><Width>26mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>#E8EDF4</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Val_Deu_Recargo">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="$ " &amp; Format(First(Fields!ValorRecargo.Value, "DS_CEP"), "#,##0.00")</Value>
+                    <Style><FontSize>8pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style><TextAlign>Right</TextAlign></Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>75mm</Top><Left>26mm</Left><Height>7mm</Height><Width>24mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>White</BackgroundColor>
+              <PaddingRight>3pt</PaddingRight>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Lbl_Deu_Multa">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Multa:</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>75mm</Top><Left>52mm</Left><Height>7mm</Height><Width>24mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>#E8EDF4</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Val_Deu_Multa">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="$ " &amp; Format(First(Fields!ValorMulta.Value, "DS_CEP"), "#,##0.00")</Value>
+                    <Style><FontSize>8pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style><TextAlign>Right</TextAlign></Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>75mm</Top><Left>76mm</Left><Height>7mm</Height><Width>24mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>White</BackgroundColor>
+              <PaddingRight>3pt</PaddingRight>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Lbl_Deu_FechaExigibilidad">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Fecha Exigibilidad:</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>75mm</Top><Left>102mm</Left><Height>7mm</Height><Width>38mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>#E8EDF4</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Val_Deu_FechaExigibilidad">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=Format(First(Fields!FechaExigibilidad.Value, "DS_CEP"), "dd/MM/yyyy")</Value>
+                    <Style><FontSize>8pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style><TextAlign>Center</TextAlign></Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>75mm</Top><Left>140mm</Left><Height>7mm</Height><Width>30mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>White</BackgroundColor>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+
+          <Textbox Name="Lbl_Deu_Tasa">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Tasa:</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>83mm</Top><Left>0mm</Left><Height>7mm</Height><Width>26mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>#E8EDF4</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Val_Deu_Tasa">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="$ " &amp; Format(First(Fields!ValorTasa.Value, "DS_CEP"), "#,##0.00")</Value>
+                    <Style><FontSize>8pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style><TextAlign>Right</TextAlign></Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>83mm</Top><Left>26mm</Left><Height>7mm</Height><Width>24mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>White</BackgroundColor>
+              <PaddingRight>3pt</PaddingRight>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Lbl_Deu_Coactiva">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Coactiva:</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>83mm</Top><Left>52mm</Left><Height>7mm</Height><Width>24mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>#E8EDF4</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Val_Deu_Coactiva">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="$ " &amp; Format(First(Fields!ValorCoactiva.Value, "DS_CEP"), "#,##0.00")</Value>
+                    <Style><FontSize>8pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style><TextAlign>Right</TextAlign></Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>83mm</Top><Left>76mm</Left><Height>7mm</Height><Width>24mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>White</BackgroundColor>
+              <PaddingRight>3pt</PaddingRight>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Lbl_Deu_ValorTotal">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Valor Total:</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>83mm</Top><Left>102mm</Left><Height>7mm</Height><Width>38mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>#E8EDF4</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Val_Deu_ValorTotal">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="$ " &amp; Format(First(Fields!ValorTotal.Value, "DS_CEP"), "#,##0.00")</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style><TextAlign>Right</TextAlign></Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>83mm</Top><Left>140mm</Left><Height>7mm</Height><Width>30mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>White</BackgroundColor>
+              <PaddingRight>3pt</PaddingRight>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+
+          <Textbox Name="Hdr_Cobro">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Cobro</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight><Color>White</Color></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>92mm</Top><Left>0mm</Left><Height>6mm</Height><Width>315mm</Width>
+            <Style>
+              <Border><Style>None</Style></Border>
+              <BackgroundColor>#1f3864</BackgroundColor>
+              <PaddingLeft>4pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+
+          <Textbox Name="Lbl_Cobro_IdCobro">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Id Cobro:</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>99mm</Top><Left>0mm</Left><Height>7mm</Height><Width>24mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>#E8EDF4</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Val_Cobro_IdCobro">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!IdCobro.Value, "DS_CEP")</Value>
+                    <Style><FontSize>8pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>99mm</Top><Left>24mm</Left><Height>7mm</Height><Width>34mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>White</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Lbl_Cobro_FechaCobro">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Fecha de Cobro:</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>99mm</Top><Left>60mm</Left><Height>7mm</Height><Width>32mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>#E8EDF4</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Val_Cobro_FechaCobro">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=Format(First(Fields!FechaCobro.Value, "DS_CEP"), "dd/MM/yyyy")</Value>
+                    <Style><FontSize>8pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style><TextAlign>Center</TextAlign></Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>99mm</Top><Left>92mm</Left><Height>7mm</Height><Width>34mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>White</BackgroundColor>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+
+          <Textbox Name="Hdr_Predio">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Predio</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight><Color>White</Color></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>108mm</Top><Left>0mm</Left><Height>6mm</Height><Width>315mm</Width>
+            <Style>
+              <Border><Style>None</Style></Border>
+              <BackgroundColor>#1f3864</BackgroundColor>
+              <PaddingLeft>4pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+
+          <Textbox Name="Lbl_Pred_Sector">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Sector:</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>115mm</Top><Left>0mm</Left><Height>7mm</Height><Width>16mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>#E8EDF4</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Val_Pred_Sector">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!IdSector.Value, "DS_CEP")</Value>
+                    <Style><FontSize>8pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style><TextAlign>Center</TextAlign></Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>115mm</Top><Left>16mm</Left><Height>7mm</Height><Width>14mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>White</BackgroundColor>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Lbl_Pred_Manzana">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Manzana:</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>115mm</Top><Left>32mm</Left><Height>7mm</Height><Width>18mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>#E8EDF4</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Val_Pred_Manzana">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!Manzana.Value, "DS_CEP")</Value>
+                    <Style><FontSize>8pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style><TextAlign>Center</TextAlign></Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>115mm</Top><Left>50mm</Left><Height>7mm</Height><Width>14mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>White</BackgroundColor>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Lbl_Pred_Lote">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Lote:</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>115mm</Top><Left>66mm</Left><Height>7mm</Height><Width>14mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>#E8EDF4</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Val_Pred_Lote">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!Lote.Value, "DS_CEP")</Value>
+                    <Style><FontSize>8pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style><TextAlign>Center</TextAlign></Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>115mm</Top><Left>80mm</Left><Height>7mm</Height><Width>14mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>White</BackgroundColor>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Lbl_Pred_Division">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>División:</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>115mm</Top><Left>96mm</Left><Height>7mm</Height><Width>18mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>#E8EDF4</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Val_Pred_Division">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!Division.Value, "DS_CEP")</Value>
+                    <Style><FontSize>8pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style><TextAlign>Center</TextAlign></Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>115mm</Top><Left>114mm</Left><Height>7mm</Height><Width>12mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>White</BackgroundColor>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Lbl_Pred_Phv">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Phv:</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>115mm</Top><Left>128mm</Left><Height>7mm</Height><Width>12mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>#E8EDF4</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Val_Pred_Phv">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!Phv.Value, "DS_CEP")</Value>
+                    <Style><FontSize>8pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style><TextAlign>Center</TextAlign></Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>115mm</Top><Left>140mm</Left><Height>7mm</Height><Width>12mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>White</BackgroundColor>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Lbl_Pred_Phh">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Phh:</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>115mm</Top><Left>154mm</Left><Height>7mm</Height><Width>12mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>#E8EDF4</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Val_Pred_Phh">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!Phh.Value, "DS_CEP")</Value>
+                    <Style><FontSize>8pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style><TextAlign>Center</TextAlign></Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>115mm</Top><Left>166mm</Left><Height>7mm</Height><Width>12mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>White</BackgroundColor>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Lbl_Pred_Numero">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Numero:</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>115mm</Top><Left>180mm</Left><Height>7mm</Height><Width>18mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>#E8EDF4</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Val_Pred_Numero">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!Numero.Value, "DS_CEP")</Value>
+                    <Style><FontSize>8pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style><TextAlign>Center</TextAlign></Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>115mm</Top><Left>198mm</Left><Height>7mm</Height><Width>14mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>White</BackgroundColor>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+
+          <Textbox Name="Lbl_Obs1">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Observación 1:</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>124mm</Top><Left>0mm</Left><Height>7mm</Height><Width>30mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>#E8EDF4</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Val_Obs1">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!Observacion1.Value, "DS_CEP")</Value>
+                    <Style><FontSize>8pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>124mm</Top><Left>30mm</Left><Height>7mm</Height><Width>200mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>White</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Lbl_Obs2">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Observación 2:</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>132mm</Top><Left>0mm</Left><Height>7mm</Height><Width>30mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>#E8EDF4</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Val_Obs2">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!Observacion2.Value, "DS_CEP")</Value>
+                    <Style><FontSize>8pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>132mm</Top><Left>30mm</Left><Height>7mm</Height><Width>200mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>White</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Lbl_Obs3">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Observación 3:</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>140mm</Top><Left>0mm</Left><Height>7mm</Height><Width>30mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>#E8EDF4</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+          <Textbox Name="Val_Obs3">
+            <CanGrow>true</CanGrow>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>=First(Fields!Observacion3.Value, "DS_CEP")</Value>
+                    <Style><FontSize>8pt</FontSize></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>140mm</Top><Left>30mm</Left><Height>7mm</Height><Width>200mm</Width>
+            <Style>
+              <Border><Style>Solid</Style><Color>#B0BEC5</Color></Border>
+              <BackgroundColor>White</BackgroundColor>
+              <PaddingLeft>3pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+
+          <Textbox Name="Hdr_Temporales">
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Cobros/Reversos Electrónicos Temporales</Value>
+                    <Style><FontSize>8pt</FontSize><FontWeight>Bold</FontWeight><Color>White</Color></Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>150mm</Top><Left>0mm</Left><Height>6mm</Height><Width>315mm</Width>
+            <Style>
+              <Border><Style>None</Style></Border>
+              <BackgroundColor>#1f3864</BackgroundColor>
+              <PaddingLeft>4pt</PaddingLeft>
+              <VerticalAlign>Middle</VerticalAlign>
+            </Style>
+          </Textbox>
+
+          <Tablix Name="TablixTemporales">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn><Width>14mm</Width></TablixColumn>
+                <TablixColumn><Width>16mm</Width></TablixColumn>
+                <TablixColumn><Width>14mm</Width></TablixColumn>
+                <TablixColumn><Width>40mm</Width></TablixColumn>
+                <TablixColumn><Width>22mm</Width></TablixColumn>
+                <TablixColumn><Width>16mm</Width></TablixColumn>
+                <TablixColumn><Width>48mm</Width></TablixColumn>
+                <TablixColumn><Width>22mm</Width></TablixColumn>
+                <TablixColumn><Width>30mm</Width></TablixColumn>
+                <TablixColumn><Width>30mm</Width></TablixColumn>
+                <TablixColumn><Width>22mm</Width></TablixColumn>
+                <TablixColumn><Width>14mm</Width></TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>8mm</Height>
+                  <TablixCells>
+                    <TablixCell><CellContents><Textbox Name="TH_IdCobro">
+                      <Paragraphs><Paragraph>
+                        <TextRuns><TextRun><Value>IdCobro</Value><Style><FontSize>7pt</FontSize><FontWeight>Bold</FontWeight><Color>White</Color></Style></TextRun></TextRuns>
+                        <Style><TextAlign>Center</TextAlign></Style>
+                      </Paragraph></Paragraphs>
+                      <Style><Border><Color>#ffffff</Color><Style>Solid</Style></Border><BackgroundColor>#2e75b6</BackgroundColor><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom></Style>
+                    </Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="TH_IdLiquidacion">
+                      <Paragraphs><Paragraph>
+                        <TextRuns><TextRun><Value>IdLiquidacion</Value><Style><FontSize>7pt</FontSize><FontWeight>Bold</FontWeight><Color>White</Color></Style></TextRun></TextRuns>
+                        <Style><TextAlign>Center</TextAlign></Style>
+                      </Paragraph></Paragraphs>
+                      <Style><Border><Color>#ffffff</Color><Style>Solid</Style></Border><BackgroundColor>#2e75b6</BackgroundColor><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom></Style>
+                    </Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="TH_Estado">
+                      <Paragraphs><Paragraph>
+                        <TextRuns><TextRun><Value>Estado</Value><Style><FontSize>7pt</FontSize><FontWeight>Bold</FontWeight><Color>White</Color></Style></TextRun></TextRuns>
+                        <Style><TextAlign>Center</TextAlign></Style>
+                      </Paragraph></Paragraphs>
+                      <Style><Border><Color>#ffffff</Color><Style>Solid</Style></Border><BackgroundColor>#2e75b6</BackgroundColor><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom></Style>
+                    </Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="TH_Catalogo">
+                      <Paragraphs><Paragraph>
+                        <TextRuns><TextRun><Value>Catálogo</Value><Style><FontSize>7pt</FontSize><FontWeight>Bold</FontWeight><Color>White</Color></Style></TextRun></TextRuns>
+                        <Style><TextAlign>Center</TextAlign></Style>
+                      </Paragraph></Paragraphs>
+                      <Style><Border><Color>#ffffff</Color><Style>Solid</Style></Border><BackgroundColor>#2e75b6</BackgroundColor><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom></Style>
+                    </Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="TH_FechaCompensacion">
+                      <Paragraphs><Paragraph>
+                        <TextRuns><TextRun><Value>Fecha Compensación</Value><Style><FontSize>7pt</FontSize><FontWeight>Bold</FontWeight><Color>White</Color></Style></TextRun></TextRuns>
+                        <Style><TextAlign>Center</TextAlign></Style>
+                      </Paragraph></Paragraphs>
+                      <Style><Border><Color>#ffffff</Color><Style>Solid</Style></Border><BackgroundColor>#2e75b6</BackgroundColor><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom></Style>
+                    </Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="TH_Total">
+                      <Paragraphs><Paragraph>
+                        <TextRuns><TextRun><Value>Total</Value><Style><FontSize>7pt</FontSize><FontWeight>Bold</FontWeight><Color>White</Color></Style></TextRun></TextRuns>
+                        <Style><TextAlign>Center</TextAlign></Style>
+                      </Paragraph></Paragraphs>
+                      <Style><Border><Color>#ffffff</Color><Style>Solid</Style></Border><BackgroundColor>#2e75b6</BackgroundColor><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom></Style>
+                    </Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="TH_NombreContribuyente">
+                      <Paragraphs><Paragraph>
+                        <TextRuns><TextRun><Value>Nombre Contribuyente</Value><Style><FontSize>7pt</FontSize><FontWeight>Bold</FontWeight><Color>White</Color></Style></TextRun></TextRuns>
+                        <Style><TextAlign>Center</TextAlign></Style>
+                      </Paragraph></Paragraphs>
+                      <Style><Border><Color>#ffffff</Color><Style>Solid</Style></Border><BackgroundColor>#2e75b6</BackgroundColor><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom></Style>
+                    </Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="TH_FechaReverso">
+                      <Paragraphs><Paragraph>
+                        <TextRuns><TextRun><Value>Fecha Reverso</Value><Style><FontSize>7pt</FontSize><FontWeight>Bold</FontWeight><Color>White</Color></Style></TextRun></TextRuns>
+                        <Style><TextAlign>Center</TextAlign></Style>
+                      </Paragraph></Paragraphs>
+                      <Style><Border><Color>#ffffff</Color><Style>Solid</Style></Border><BackgroundColor>#2e75b6</BackgroundColor><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom></Style>
+                    </Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="TH_MotivoReverso">
+                      <Paragraphs><Paragraph>
+                        <TextRuns><TextRun><Value>Motivo Reverso</Value><Style><FontSize>7pt</FontSize><FontWeight>Bold</FontWeight><Color>White</Color></Style></TextRun></TextRuns>
+                        <Style><TextAlign>Center</TextAlign></Style>
+                      </Paragraph></Paragraphs>
+                      <Style><Border><Color>#ffffff</Color><Style>Solid</Style></Border><BackgroundColor>#2e75b6</BackgroundColor><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom></Style>
+                    </Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="TH_Banco">
+                      <Paragraphs><Paragraph>
+                        <TextRuns><TextRun><Value>Banco</Value><Style><FontSize>7pt</FontSize><FontWeight>Bold</FontWeight><Color>White</Color></Style></TextRun></TextRuns>
+                        <Style><TextAlign>Center</TextAlign></Style>
+                      </Paragraph></Paragraphs>
+                      <Style><Border><Color>#ffffff</Color><Style>Solid</Style></Border><BackgroundColor>#2e75b6</BackgroundColor><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom></Style>
+                    </Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="TH_Cajero">
+                      <Paragraphs><Paragraph>
+                        <TextRuns><TextRun><Value>Cajero</Value><Style><FontSize>7pt</FontSize><FontWeight>Bold</FontWeight><Color>White</Color></Style></TextRun></TextRuns>
+                        <Style><TextAlign>Center</TextAlign></Style>
+                      </Paragraph></Paragraphs>
+                      <Style><Border><Color>#ffffff</Color><Style>Solid</Style></Border><BackgroundColor>#2e75b6</BackgroundColor><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom></Style>
+                    </Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="TH_IdApertura">
+                      <Paragraphs><Paragraph>
+                        <TextRuns><TextRun><Value>IdApertura</Value><Style><FontSize>7pt</FontSize><FontWeight>Bold</FontWeight><Color>White</Color></Style></TextRun></TextRuns>
+                        <Style><TextAlign>Center</TextAlign></Style>
+                      </Paragraph></Paragraphs>
+                      <Style><Border><Color>#ffffff</Color><Style>Solid</Style></Border><BackgroundColor>#2e75b6</BackgroundColor><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>2pt</PaddingTop><PaddingBottom>2pt</PaddingBottom></Style>
+                    </Textbox></CellContents></TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>6mm</Height>
+                  <TablixCells>
+                    <TablixCell><CellContents><Textbox Name="TD_IdCobro">
+                      <Paragraphs><Paragraph>
+                        <TextRuns><TextRun><Value>=Fields!IdCobro.Value</Value><Style><FontSize>7pt</FontSize></Style></TextRun></TextRuns>
+                        <Style />
+                      </Paragraph></Paragraphs>
+                      <Style><Border><Color>#cccccc</Color><Style>Solid</Style></Border><BackgroundColor>=IIF(RowNumber(Nothing) Mod 2 = 0,"#EEF2F7","White")</BackgroundColor><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>1pt</PaddingTop><PaddingBottom>1pt</PaddingBottom></Style>
+                    </Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="TD_IdLiquidacion">
+                      <Paragraphs><Paragraph>
+                        <TextRuns><TextRun><Value>=Fields!IdLiquidacion.Value</Value><Style><FontSize>7pt</FontSize></Style></TextRun></TextRuns>
+                        <Style />
+                      </Paragraph></Paragraphs>
+                      <Style><Border><Color>#cccccc</Color><Style>Solid</Style></Border><BackgroundColor>=IIF(RowNumber(Nothing) Mod 2 = 0,"#EEF2F7","White")</BackgroundColor><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>1pt</PaddingTop><PaddingBottom>1pt</PaddingBottom></Style>
+                    </Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="TD_Estado">
+                      <Paragraphs><Paragraph>
+                        <TextRuns><TextRun><Value>=Fields!Estado.Value</Value><Style><FontSize>7pt</FontSize></Style></TextRun></TextRuns>
+                        <Style><TextAlign>Center</TextAlign></Style>
+                      </Paragraph></Paragraphs>
+                      <Style><Border><Color>#cccccc</Color><Style>Solid</Style></Border><BackgroundColor>=IIF(RowNumber(Nothing) Mod 2 = 0,"#EEF2F7","White")</BackgroundColor><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>1pt</PaddingTop><PaddingBottom>1pt</PaddingBottom></Style>
+                    </Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="TD_Catalogo">
+                      <Paragraphs><Paragraph>
+                        <TextRuns><TextRun><Value>=Fields!Catalogo.Value</Value><Style><FontSize>7pt</FontSize></Style></TextRun></TextRuns>
+                        <Style />
+                      </Paragraph></Paragraphs>
+                      <Style><Border><Color>#cccccc</Color><Style>Solid</Style></Border><BackgroundColor>=IIF(RowNumber(Nothing) Mod 2 = 0,"#EEF2F7","White")</BackgroundColor><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>1pt</PaddingTop><PaddingBottom>1pt</PaddingBottom></Style>
+                    </Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="TD_FechaCompensacion">
+                      <Paragraphs><Paragraph>
+                        <TextRuns><TextRun><Value>=IIF(IsNothing(Fields!FechaCompensacion.Value),"",Format(Fields!FechaCompensacion.Value,"dd-MM-yyyy"))</Value><Style><FontSize>7pt</FontSize></Style></TextRun></TextRuns>
+                        <Style><TextAlign>Center</TextAlign></Style>
+                      </Paragraph></Paragraphs>
+                      <Style><Border><Color>#cccccc</Color><Style>Solid</Style></Border><BackgroundColor>=IIF(RowNumber(Nothing) Mod 2 = 0,"#EEF2F7","White")</BackgroundColor><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>1pt</PaddingTop><PaddingBottom>1pt</PaddingBottom></Style>
+                    </Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="TD_Total">
+                      <Paragraphs><Paragraph>
+                        <TextRuns><TextRun><Value>="$" &amp; Format(Fields!Total.Value,"#,##0.00")</Value><Style><FontSize>7pt</FontSize></Style></TextRun></TextRuns>
+                        <Style><TextAlign>Right</TextAlign></Style>
+                      </Paragraph></Paragraphs>
+                      <Style><Border><Color>#cccccc</Color><Style>Solid</Style></Border><BackgroundColor>=IIF(RowNumber(Nothing) Mod 2 = 0,"#EEF2F7","White")</BackgroundColor><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>1pt</PaddingTop><PaddingBottom>1pt</PaddingBottom></Style>
+                    </Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="TD_NombreContribuyente">
+                      <Paragraphs><Paragraph>
+                        <TextRuns><TextRun><Value>=Fields!NombreContribuyente.Value</Value><Style><FontSize>7pt</FontSize></Style></TextRun></TextRuns>
+                        <Style />
+                      </Paragraph></Paragraphs>
+                      <Style><Border><Color>#cccccc</Color><Style>Solid</Style></Border><BackgroundColor>=IIF(RowNumber(Nothing) Mod 2 = 0,"#EEF2F7","White")</BackgroundColor><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>1pt</PaddingTop><PaddingBottom>1pt</PaddingBottom></Style>
+                    </Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="TD_FechaReverso">
+                      <Paragraphs><Paragraph>
+                        <TextRuns><TextRun><Value>=IIF(IsNothing(Fields!FechaReverso.Value),"",Format(Fields!FechaReverso.Value,"dd-MM-yyyy HH:mm"))</Value><Style><FontSize>7pt</FontSize></Style></TextRun></TextRuns>
+                        <Style><TextAlign>Center</TextAlign></Style>
+                      </Paragraph></Paragraphs>
+                      <Style><Border><Color>#cccccc</Color><Style>Solid</Style></Border><BackgroundColor>=IIF(RowNumber(Nothing) Mod 2 = 0,"#EEF2F7","White")</BackgroundColor><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>1pt</PaddingTop><PaddingBottom>1pt</PaddingBottom></Style>
+                    </Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="TD_MotivoReverso">
+                      <Paragraphs><Paragraph>
+                        <TextRuns><TextRun><Value>=Fields!MotivoReverso.Value</Value><Style><FontSize>7pt</FontSize></Style></TextRun></TextRuns>
+                        <Style />
+                      </Paragraph></Paragraphs>
+                      <Style><Border><Color>#cccccc</Color><Style>Solid</Style></Border><BackgroundColor>=IIF(RowNumber(Nothing) Mod 2 = 0,"#EEF2F7","White")</BackgroundColor><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>1pt</PaddingTop><PaddingBottom>1pt</PaddingBottom></Style>
+                    </Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="TD_Banco">
+                      <Paragraphs><Paragraph>
+                        <TextRuns><TextRun><Value>=Fields!Banco.Value</Value><Style><FontSize>7pt</FontSize></Style></TextRun></TextRuns>
+                        <Style />
+                      </Paragraph></Paragraphs>
+                      <Style><Border><Color>#cccccc</Color><Style>Solid</Style></Border><BackgroundColor>=IIF(RowNumber(Nothing) Mod 2 = 0,"#EEF2F7","White")</BackgroundColor><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>1pt</PaddingTop><PaddingBottom>1pt</PaddingBottom></Style>
+                    </Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="TD_Cajero">
+                      <Paragraphs><Paragraph>
+                        <TextRuns><TextRun><Value>=Fields!Cajero.Value</Value><Style><FontSize>7pt</FontSize></Style></TextRun></TextRuns>
+                        <Style />
+                      </Paragraph></Paragraphs>
+                      <Style><Border><Color>#cccccc</Color><Style>Solid</Style></Border><BackgroundColor>=IIF(RowNumber(Nothing) Mod 2 = 0,"#EEF2F7","White")</BackgroundColor><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>1pt</PaddingTop><PaddingBottom>1pt</PaddingBottom></Style>
+                    </Textbox></CellContents></TablixCell>
+                    <TablixCell><CellContents><Textbox Name="TD_IdApertura">
+                      <Paragraphs><Paragraph>
+                        <TextRuns><TextRun><Value>=Fields!IdApertura.Value</Value><Style><FontSize>7pt</FontSize></Style></TextRun></TextRuns>
+                        <Style><TextAlign>Center</TextAlign></Style>
+                      </Paragraph></Paragraphs>
+                      <Style><Border><Color>#cccccc</Color><Style>Solid</Style></Border><BackgroundColor>=IIF(RowNumber(Nothing) Mod 2 = 0,"#EEF2F7","White")</BackgroundColor><PaddingLeft>2pt</PaddingLeft><PaddingRight>2pt</PaddingRight><PaddingTop>1pt</PaddingTop><PaddingBottom>1pt</PaddingBottom></Style>
+                    </Textbox></CellContents></TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember /><TablixMember /><TablixMember /><TablixMember />
+                <TablixMember /><TablixMember /><TablixMember /><TablixMember />
+                <TablixMember /><TablixMember /><TablixMember /><TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <KeepWithGroup>After</KeepWithGroup>
+                  <RepeatOnNewPage>true</RepeatOnNewPage>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+                <TablixMember>
+                  <Group Name="Details" />
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>DS_Temporales</DataSetName>
+            <NoRowsMessage>No se encontraron cobros/reversos electrónicos temporales para este CEP.</NoRowsMessage>
+            <Top>157mm</Top>
+            <Left>0mm</Left>
+            <Height>14mm</Height>
+            <Width>324mm</Width>
+            <ZIndex>1</ZIndex>
+            <Style>
+              <Border><Style>None</Style></Border>
+            </Style>
+          </Tablix>
+
+        </ReportItems>
+        <Height>200mm</Height>
+        <Style />
+      </Body>
+      <Width>330mm</Width>
+      <Page>
+        <PageHeight>297mm</PageHeight>
+        <PageWidth>420mm</PageWidth>
+        <LeftMargin>10mm</LeftMargin>
+        <RightMargin>10mm</RightMargin>
+        <TopMargin>10mm</TopMargin>
+        <BottomMargin>10mm</BottomMargin>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="CEP">
+      <DataType>String</DataType>
+      <AllowBlank>false</AllowBlank>
+      <Prompt>Código Electrónico de Pago (CEP)</Prompt>
+    </ReportParameter>
+  </ReportParameters>
+  <ReportParametersLayout>
+    <GridLayoutDefinition>
+      <NumberOfColumns>1</NumberOfColumns>
+      <NumberOfRows>1</NumberOfRows>
+      <CellDefinitions>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>CEP</ParameterName>
+        </CellDefinition>
+      </CellDefinitions>
+    </GridLayoutDefinition>
+  </ReportParametersLayout>
+</Report>

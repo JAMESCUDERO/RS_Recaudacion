@@ -1,0 +1,1413 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report MustUnderstand="df" xmlns="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner" xmlns:df="http://schemas.microsoft.com/sqlserver/reporting/2016/01/reportdefinition/defaultfontfamily" xmlns:am="http://schemas.microsoft.com/sqlserver/reporting/authoringmetadata">
+  <rd:ReportUnitType>Mm</rd:ReportUnitType>
+  <rd:ReportID>a5137539-d2ab-4cb7-aae3-a42280874d3e</rd:ReportID>
+  <am:AuthoringMetadata>
+    <am:CreatedBy>
+      <am:Name>PBIRB</am:Name>
+      <am:Version>15.7.1815.334</am:Version>
+    </am:CreatedBy>
+    <am:UpdatedBy>
+      <am:Name>PBIRB</am:Name>
+      <am:Version>15.7.1815.334</am:Version>
+    </am:UpdatedBy>
+    <am:LastModifiedTimestamp>2026-04-09T14:35:33.5703646Z</am:LastModifiedTimestamp>
+  </am:AuthoringMetadata>
+  <df:DefaultFontFamily>Segoe UI</df:DefaultFontFamily>
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="RECAUDACION_DM">
+      <rd:SecurityType>Integrated</rd:SecurityType>
+      <ConnectionProperties>
+        <DataProvider>SQL</DataProvider>
+        <ConnectString>Data Source=SERVIDOR_DW;Initial Catalog=RECAUDACION_DM;Integrated Security=True</ConnectString>
+        <IntegratedSecurity>true</IntegratedSecurity>
+      </ConnectionProperties>
+      <rd:DataSourceID>3cd21496-9fbb-4d12-81bc-07cc5ae04234</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="DS_FechaActualizacion">
+      <Query>
+        <DataSourceName>RECAUDACION_DM</DataSourceName>
+        <CommandText>SELECT MAX(FC.FechaEntidadExterna) AS FechaActualizacion
+FROM RECAUDACION_DM.DesgloseCobros.FactCobro F WITH (NOLOCK)
+INNER JOIN RECAUDACION_DM.DesgloseCobros.DimFechaEntidadExterna FC WITH (NOLOCK)
+  ON F.IdDimFechaEntidadExterna = FC.IdDimFechaEntidadExterna
+WHERE F.Estado = 'Pago'</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="FechaActualizacion">
+          <rd:TypeName>System.DateTime</rd:TypeName>
+          <DataField>FechaActualizacion</DataField>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="DS_Transaccion">
+      <Query>
+        <DataSourceName>RECAUDACION_DM</DataSourceName>
+        <CommandText>SELECT '' AS Transaccion
+UNION ALL
+SELECT DISTINCT Transaccion
+FROM RECAUDACION_DM.DesgloseCobros.DimTransaccion
+ORDER BY Transaccion</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="Transaccion">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>Transaccion</DataField>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="DS_SubTransaccion">
+      <Query>
+        <DataSourceName>RECAUDACION_DM</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@Transaccion">
+            <Value>=Parameters!Transaccion.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>SELECT '' AS SubTransaccion
+UNION ALL
+SELECT DISTINCT SubTransaccion
+FROM RECAUDACION_DM.DesgloseCobros.DimTransaccion
+WHERE (@Transaccion = '' OR Transaccion = @Transaccion)
+ORDER BY SubTransaccion</CommandText>
+      </Query>
+      <Fields>
+        <Field Name="SubTransaccion">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>SubTransaccion</DataField>
+        </Field>
+      </Fields>
+    </DataSet>
+    <DataSet Name="DesgloseCobros">
+      <Query>
+        <DataSourceName>RECAUDACION_DM</DataSourceName>
+        <QueryParameters>
+          <QueryParameter Name="@FechaDesde">
+            <Value>=Parameters!FechaDesde.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@FechaHasta">
+            <Value>=Parameters!FechaHasta.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@Transaccion">
+            <Value>=Parameters!Transaccion.Value</Value>
+          </QueryParameter>
+          <QueryParameter Name="@SubTransaccion">
+            <Value>=Parameters!SubTransaccion.Value</Value>
+          </QueryParameter>
+        </QueryParameters>
+        <CommandText>SELECT TOP 100000
+ FACT_COBRO.IdFactCobro
+,FACT_COBRO.IdCobro
+,DIM_FECHA_COBRO_CONTABLE.FechaEntidadExterna AS FechaCobro
+,FACT_DESGLOSE_COBRO.FechaIngreso
+,DIMCONTRIBU.NombreContribuyente
+,DIM_TRANSACCION.Transaccion
+,DIM_TRANSACCION.SubTransaccion
+,Cajero                = DIMBANCO.Banco
+,DIMCANAL_DE_PAGO.CanalDePago
+
+,Totalrecibido         = FACT_COBRO.TotalRecibido
+,TotalEfectivo         = FACT_COBRO.TotalEfectivo
+,TotalCheque           = FACT_COBRO.TotalCheque
+,Totaltarjeta          = FACT_COBRO.TotalTarjeta
+,Totalnotadecredito    = FACT_COBRO.TotalNotaCredito
+,TotalExterno          = FACT_COBRO.TotalExterno
+,TotalTransferencia    = FACT_COBRO.TotalTransferencia
+,Total                 = FACT_COBRO.Total
+
+FROM RECAUDACION_DM.DesgloseCobros.FactCobro FACT_COBRO WITH (NOLOCK)
+
+INNER JOIN RECAUDACION_DM.DesgloseCobros.FactDesgloseCobro FACT_DESGLOSE_COBRO WITH (NOLOCK)
+  ON FACT_COBRO.IdFactCobro = FACT_DESGLOSE_COBRO.IdFactCobro
+
+INNER JOIN RECAUDACION_DM.DesgloseCobros.DimFechaEntidadExterna DIM_FECHA_COBRO_CONTABLE WITH (NOLOCK)
+  ON FACT_COBRO.IdDimFechaEntidadExterna = DIM_FECHA_COBRO_CONTABLE.IdDimFechaEntidadExterna
+
+INNER JOIN RECAUDACION_DM.DesgloseCobros.DimTransaccion DIM_TRANSACCION WITH (NOLOCK)
+  ON FACT_COBRO.IdDimTransaccion = DIM_TRANSACCION.IdDimTransaccion
+
+INNER JOIN RECAUDACION_DM.[DesgloseCobros].[DimCanalDePago] DIMCANAL_DE_PAGO WITH (NOLOCK)
+  ON DIMCANAL_DE_PAGO.IdDimCanalDePago = FACT_COBRO.IdDimCanalDePago
+
+INNER JOIN RECAUDACION_DM.[DesgloseCobros].[DimBanco] DIMBANCO WITH (NOLOCK)
+  ON DIMBANCO.IdDimBanco = FACT_COBRO.IdDimBanco
+
+INNER JOIN RECAUDACION_DM.[DesgloseCobros].[DimContribuyente] DIMCONTRIBU WITH (NOLOCK)
+  ON FACT_COBRO.IdDimContribuyente = DIMCONTRIBU.IdDimContribuyente
+
+WHERE MotivoReverso IS NULL
+  AND FACT_DESGLOSE_COBRO.Prioridad = '1'
+  AND DIM_FECHA_COBRO_CONTABLE.FechaEntidadExterna &gt;= @FechaDesde
+  AND DIM_FECHA_COBRO_CONTABLE.FechaEntidadExterna &lt;  DATEADD(day, 1, @FechaHasta)
+  AND (@Transaccion    = '' OR DIM_TRANSACCION.Transaccion    = @Transaccion)
+  AND (@SubTransaccion = '' OR DIM_TRANSACCION.SubTransaccion = @SubTransaccion)</CommandText>
+        <Timeout>120</Timeout>
+      </Query>
+      <Fields>
+        <Field Name="IdFactCobro">
+          <rd:TypeName>System.Int32</rd:TypeName>
+          <DataField>IdFactCobro</DataField>
+        </Field>
+        <Field Name="IdCobro">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>IdCobro</DataField>
+        </Field>
+        <Field Name="FechaCobro">
+          <rd:TypeName>System.DateTime</rd:TypeName>
+          <DataField>FechaCobro</DataField>
+        </Field>
+        <Field Name="FechaIngreso">
+          <rd:TypeName>System.DateTime</rd:TypeName>
+          <DataField>FechaIngreso</DataField>
+        </Field>
+        <Field Name="NombreContribuyente">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>NombreContribuyente</DataField>
+        </Field>
+        <Field Name="Transaccion">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>Transaccion</DataField>
+        </Field>
+        <Field Name="SubTransaccion">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>SubTransaccion</DataField>
+        </Field>
+        <Field Name="Cajero">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>Cajero</DataField>
+        </Field>
+        <Field Name="CanalDePago">
+          <rd:TypeName>System.String</rd:TypeName>
+          <DataField>CanalDePago</DataField>
+        </Field>
+        <Field Name="Totalrecibido">
+          <rd:TypeName>System.Decimal</rd:TypeName>
+          <DataField>Totalrecibido</DataField>
+        </Field>
+        <Field Name="TotalEfectivo">
+          <rd:TypeName>System.Decimal</rd:TypeName>
+          <DataField>TotalEfectivo</DataField>
+        </Field>
+        <Field Name="TotalCheque">
+          <rd:TypeName>System.Decimal</rd:TypeName>
+          <DataField>TotalCheque</DataField>
+        </Field>
+        <Field Name="Totaltarjeta">
+          <rd:TypeName>System.Decimal</rd:TypeName>
+          <DataField>Totaltarjeta</DataField>
+        </Field>
+        <Field Name="Totalnotadecredito">
+          <rd:TypeName>System.Decimal</rd:TypeName>
+          <DataField>Totalnotadecredito</DataField>
+        </Field>
+        <Field Name="TotalExterno">
+          <rd:TypeName>System.Decimal</rd:TypeName>
+          <DataField>TotalExterno</DataField>
+        </Field>
+        <Field Name="TotalTransferencia">
+          <rd:TypeName>System.Decimal</rd:TypeName>
+          <DataField>TotalTransferencia</DataField>
+        </Field>
+        <Field Name="Total">
+          <rd:TypeName>System.Decimal</rd:TypeName>
+          <DataField>Total</DataField>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <ReportSections>
+    <ReportSection>
+      <Body>
+        <ReportItems>
+          <Textbox Name="ReportTitle">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>Desglose de Cobros</Value>
+                    <Style>
+                      <FontFamily>Segoe UI Light</FontFamily>
+                      <FontSize>22pt</FontSize>
+                      <FontWeight>Bold</FontWeight>
+                      <Color>#1f3864</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style />
+              </Paragraph>
+            </Paragraphs>
+            <Top>0mm</Top>
+            <Left>0mm</Left>
+            <Height>12mm</Height>
+            <Width>270mm</Width>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Textbox>
+          <Textbox Name="FechaActualizacion">
+            <CanGrow>true</CanGrow>
+            <KeepTogether>true</KeepTogether>
+            <Paragraphs>
+              <Paragraph>
+                <TextRuns>
+                  <TextRun>
+                    <Value>="Datos disponibles hasta: " &amp; Format(First(Fields!FechaActualizacion.Value, "DS_FechaActualizacion"), "dd/MM/yyyy")</Value>
+                    <Style>
+                      <FontStyle>Italic</FontStyle>
+                      <FontSize>9pt</FontSize>
+                      <Color>#555555</Color>
+                    </Style>
+                  </TextRun>
+                </TextRuns>
+                <Style>
+                  <TextAlign>Right</TextAlign>
+                </Style>
+              </Paragraph>
+            </Paragraphs>
+            <Top>0mm</Top>
+            <Left>180mm</Left>
+            <Height>12mm</Height>
+            <Width>170mm</Width>
+            <ZIndex>1</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+              <PaddingRight>4pt</PaddingRight>
+            </Style>
+          </Textbox>
+          <Tablix Name="TablaCobros">
+            <TablixBody>
+              <TablixColumns>
+                <TablixColumn>
+                  <Width>18mm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>22mm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>45mm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>30mm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>46mm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>33mm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>20mm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>20mm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>18mm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>18mm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>18mm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>22mm</Width>
+                </TablixColumn>
+                <TablixColumn>
+                  <Width>20mm</Width>
+                </TablixColumn>
+              </TablixColumns>
+              <TablixRows>
+                <TablixRow>
+                  <Height>8mm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="H_IdCobro">
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>ID Cobro</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>#ffffff</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>#1f3864</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="H_FechaCobro">
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Fecha Cobro</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>#ffffff</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>#1f3864</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="H_Contribuyente">
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Contribuyente</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>#ffffff</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>#1f3864</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="H_Transaccion">
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Transacción</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>#ffffff</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>#1f3864</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="H_SubTransaccion">
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Sub Transacción</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>#ffffff</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>#1f3864</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="H_Cajero">
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Cajero</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>#ffffff</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>#1f3864</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="H_TotalRecibido">
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Recibido</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>#ffffff</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>#1f3864</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="H_Efectivo">
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Efectivo</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>#ffffff</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>#1f3864</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="H_Cheque">
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Cheque</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>#ffffff</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>#1f3864</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="H_Tarjeta">
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Tarjeta</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>#ffffff</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>#1f3864</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="H_Externo">
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Externo</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>#ffffff</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>#1f3864</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="H_Transferencia">
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Transferencia</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>#ffffff</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>#1f3864</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="H_Total">
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>Total</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Color>White</Color>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>#ffffff</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>#1f3864</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+                <TablixRow>
+                  <Height>6mm</Height>
+                  <TablixCells>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="D_IdCobro">
+                          <CanGrow>true</CanGrow>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!IdCobro.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>#cccccc</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIF(RowNumber(Nothing) Mod 2 = 0,"#EEF2F7","White")</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="D_FechaCobro">
+                          <CanGrow>true</CanGrow>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Format(Fields!FechaCobro.Value,"dd/MM/yyyy")</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Center</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>#cccccc</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIF(RowNumber(Nothing) Mod 2 = 0,"#EEF2F7","White")</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="D_Contribuyente">
+                          <CanGrow>true</CanGrow>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!NombreContribuyente.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>#cccccc</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIF(RowNumber(Nothing) Mod 2 = 0,"#EEF2F7","White")</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="D_Transaccion">
+                          <CanGrow>true</CanGrow>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Transaccion.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>#cccccc</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIF(RowNumber(Nothing) Mod 2 = 0,"#EEF2F7","White")</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="D_SubTransaccion">
+                          <CanGrow>true</CanGrow>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!SubTransaccion.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>#cccccc</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIF(RowNumber(Nothing) Mod 2 = 0,"#EEF2F7","White")</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="D_Cajero">
+                          <CanGrow>true</CanGrow>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Cajero.Value</Value>
+                                  <Style />
+                                </TextRun>
+                              </TextRuns>
+                              <Style />
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>#cccccc</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIF(RowNumber(Nothing) Mod 2 = 0,"#EEF2F7","White")</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="D_TotalRecibido">
+                          <CanGrow>true</CanGrow>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Totalrecibido.Value</Value>
+                                  <Style>
+                                    <Format>N2</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>#cccccc</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIF(RowNumber(Nothing) Mod 2 = 0,"#EEF2F7","White")</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="D_Efectivo">
+                          <CanGrow>true</CanGrow>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!TotalEfectivo.Value</Value>
+                                  <Style>
+                                    <Format>N2</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>#cccccc</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIF(RowNumber(Nothing) Mod 2 = 0,"#EEF2F7","White")</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="D_Cheque">
+                          <CanGrow>true</CanGrow>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!TotalCheque.Value</Value>
+                                  <Style>
+                                    <Format>N2</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>#cccccc</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIF(RowNumber(Nothing) Mod 2 = 0,"#EEF2F7","White")</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="D_Tarjeta">
+                          <CanGrow>true</CanGrow>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Totaltarjeta.Value</Value>
+                                  <Style>
+                                    <Format>N2</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>#cccccc</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIF(RowNumber(Nothing) Mod 2 = 0,"#EEF2F7","White")</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="D_Externo">
+                          <CanGrow>true</CanGrow>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!TotalExterno.Value</Value>
+                                  <Style>
+                                    <Format>N2</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>#cccccc</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIF(RowNumber(Nothing) Mod 2 = 0,"#EEF2F7","White")</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="D_Transferencia">
+                          <CanGrow>true</CanGrow>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!TotalTransferencia.Value</Value>
+                                  <Style>
+                                    <Format>N2</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>#cccccc</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIF(RowNumber(Nothing) Mod 2 = 0,"#EEF2F7","White")</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                    <TablixCell>
+                      <CellContents>
+                        <Textbox Name="D_Total">
+                          <CanGrow>true</CanGrow>
+                          <Paragraphs>
+                            <Paragraph>
+                              <TextRuns>
+                                <TextRun>
+                                  <Value>=Fields!Total.Value</Value>
+                                  <Style>
+                                    <FontWeight>Bold</FontWeight>
+                                    <Format>N2</Format>
+                                  </Style>
+                                </TextRun>
+                              </TextRuns>
+                              <Style>
+                                <TextAlign>Right</TextAlign>
+                              </Style>
+                            </Paragraph>
+                          </Paragraphs>
+                          <Style>
+                            <Border>
+                              <Color>#cccccc</Color>
+                              <Style>Solid</Style>
+                            </Border>
+                            <BackgroundColor>=IIF(RowNumber(Nothing) Mod 2 = 0,"#EEF2F7","White")</BackgroundColor>
+                            <PaddingLeft>2pt</PaddingLeft>
+                            <PaddingRight>2pt</PaddingRight>
+                            <PaddingTop>2pt</PaddingTop>
+                            <PaddingBottom>2pt</PaddingBottom>
+                          </Style>
+                        </Textbox>
+                      </CellContents>
+                    </TablixCell>
+                  </TablixCells>
+                </TablixRow>
+              </TablixRows>
+            </TablixBody>
+            <TablixColumnHierarchy>
+              <TablixMembers>
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+                <TablixMember />
+              </TablixMembers>
+            </TablixColumnHierarchy>
+            <TablixRowHierarchy>
+              <TablixMembers>
+                <TablixMember>
+                  <KeepWithGroup>After</KeepWithGroup>
+                  <RepeatOnNewPage>true</RepeatOnNewPage>
+                  <KeepTogether>true</KeepTogether>
+                </TablixMember>
+                <TablixMember>
+                  <Group Name="DesgloseCobros_Detalle" />
+                </TablixMember>
+              </TablixMembers>
+            </TablixRowHierarchy>
+            <DataSetName>DesgloseCobros</DataSetName>
+            <Top>15mm</Top>
+            <Left>0mm</Left>
+            <Height>14mm</Height>
+            <Width>330mm</Width>
+            <ZIndex>4</ZIndex>
+            <Style>
+              <Border>
+                <Style>None</Style>
+              </Border>
+            </Style>
+          </Tablix>
+        </ReportItems>
+        <Height>100mm</Height>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+        </Style>
+      </Body>
+      <Width>403mm</Width>
+      <Page>
+        <PageHeader>
+          <Height>35.65867mm</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>true</PrintOnLastPage>
+          <ReportItems>
+            <Image Name="Image2">
+              <Source>Embedded</Source>
+              <Value>Recaudación</Value>
+              <Sizing>FitProportional</Sizing>
+              <Top>5.08mm</Top>
+              <Left>0mm</Left>
+              <Height>20.50333mm</Height>
+              <Width>400.49998mm</Width>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+              </Style>
+            </Image>
+          </ReportItems>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+          </Style>
+        </PageHeader>
+        <PageFooter>
+          <Height>8mm</Height>
+          <PrintOnFirstPage>true</PrintOnFirstPage>
+          <PrintOnLastPage>true</PrintOnLastPage>
+          <ReportItems>
+            <Textbox Name="PageNumber">
+              <CanGrow>true</CanGrow>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=Globals!PageNumber &amp; " de " &amp; Globals!TotalPages</Value>
+                      <Style>
+                        <FontSize>8pt</FontSize>
+                        <Color>#666666</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Center</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>1mm</Top>
+              <Left>126mm</Left>
+              <Height>6mm</Height>
+              <Width>100mm</Width>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+              </Style>
+            </Textbox>
+            <Textbox Name="ExecutionTime">
+              <CanGrow>true</CanGrow>
+              <Paragraphs>
+                <Paragraph>
+                  <TextRuns>
+                    <TextRun>
+                      <Value>=Globals!ExecutionTime</Value>
+                      <Style>
+                        <FontSize>8pt</FontSize>
+                        <Color>#666666</Color>
+                      </Style>
+                    </TextRun>
+                  </TextRuns>
+                  <Style>
+                    <TextAlign>Right</TextAlign>
+                  </Style>
+                </Paragraph>
+              </Paragraphs>
+              <Top>1mm</Top>
+              <Left>302mm</Left>
+              <Height>6mm</Height>
+              <Width>50mm</Width>
+              <ZIndex>1</ZIndex>
+              <Style>
+                <Border>
+                  <Style>None</Style>
+                </Border>
+              </Style>
+            </Textbox>
+          </ReportItems>
+          <Style>
+            <Border>
+              <Style>None</Style>
+            </Border>
+          </Style>
+        </PageFooter>
+        <PageHeight>21cm</PageHeight>
+        <PageWidth>40cm</PageWidth>
+        <LeftMargin>1cm</LeftMargin>
+        <RightMargin>1cm</RightMargin>
+        <TopMargin>1.5cm</TopMargin>
+        <BottomMargin>1.5cm</BottomMargin>
+        <Style />
+      </Page>
+    </ReportSection>
+  </ReportSections>
+  <ReportParameters>
+    <ReportParameter Name="FechaDesde">
+      <DataType>DateTime</DataType>
+      <Prompt>Fecha Desde</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="FechaHasta">
+      <DataType>DateTime</DataType>
+      <Prompt>Fecha Hasta</Prompt>
+    </ReportParameter>
+    <ReportParameter Name="Transaccion">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Transacción</Prompt>
+      <ValidValues>
+        <DataSetReference>
+          <DataSetName>DS_Transaccion</DataSetName>
+          <ValueField>Transaccion</ValueField>
+          <LabelField>Transaccion</LabelField>
+        </DataSetReference>
+      </ValidValues>
+    </ReportParameter>
+    <ReportParameter Name="SubTransaccion">
+      <DataType>String</DataType>
+      <DefaultValue>
+        <Values>
+          <Value />
+        </Values>
+      </DefaultValue>
+      <AllowBlank>true</AllowBlank>
+      <Prompt>Sub Transacción</Prompt>
+      <ValidValues>
+        <DataSetReference>
+          <DataSetName>DS_SubTransaccion</DataSetName>
+          <ValueField>SubTransaccion</ValueField>
+          <LabelField>SubTransaccion</LabelField>
+        </DataSetReference>
+      </ValidValues>
+    </ReportParameter>
+  </ReportParameters>
+  <ReportParametersLayout>
+    <GridLayoutDefinition>
+      <NumberOfColumns>2</NumberOfColumns>
+      <NumberOfRows>2</NumberOfRows>
+      <CellDefinitions>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>FechaDesde</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>0</RowIndex>
+          <ParameterName>FechaHasta</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>0</ColumnIndex>
+          <RowIndex>1</RowIndex>
+          <ParameterName>Transaccion</ParameterName>
+        </CellDefinition>
+        <CellDefinition>
+          <ColumnIndex>1</ColumnIndex>
+          <RowIndex>1</RowIndex>
+          <ParameterName>SubTransaccion</ParameterName>
+        </CellDefinition>
+      </CellDefinitions>
+    </GridLayoutDefinition>
+  </ReportParametersLayout>
+  <EmbeddedImages>
+    <EmbeddedImage Name="Recaudación">
+      <MIMEType>image/jpeg</MIMEType>
+      <ImageData>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f8XM/wCpY/8AJiunoo9t/dX3B7D+8/vOY/4uZ/1LH/kxR/xcz/qWP/Jiunoo9t/dX3B7D+8/vOY/4uZ/1LH/AJMUf8XM/wCpY/8AJiunoo9t/dX3B7D+8/vOY/4uZ/1LH/kxR/xcz/qWP/Jiunoo9t/dX3B7D+8/vOY/4uZ/1LH/AJMUf8XM/wCpY/8AJiunoo9t/dX3B7D+8/vOY/4uZ/1LH/kxR/xcz/qWP/Jiunoo9t/dX3B7D+8/vOY/4uZ/1LH/AJMUf8XM/wCpY/8AJiunoo9t/dX3B7D+8/vOY/4uZ/1LH/kxR/xcz/qWP/Jiunoo9t/dX3B7D+8/vOY/4uZ/1LH/AJMUf8XM/wCpY/8AJiunoo9t/dX3B7D+8/vOY/4uZ/1LH/kxR/xcz/qWP/Jiunoo9t/dX3B7D+8/vOY/4uZ/1LH/AJMUf8XM/wCpY/8AJiunoo9t/dX3B7D+8/vOY/4uZ/1LH/kxR/xcz/qWP/Jiunoo9t/dX3B7D+8/vOY/4uZ/1LH/AJMUf8XM/wCpY/8AJiunoo9t/dX3B7D+8/vOY/4uZ/1LH/kxR/xcz/qWP/Jiunoo9t/dX3B7D+8/vOY/4uZ/1LH/AJMUf8XM/wCpY/8AJiunoo9t/dX3B7D+8/vOY/4uZ/1LH/kxR/xcz/qWP/Jiunoo9t/dX3B7D+8/vOY/4uZ/1LH/AJMUf8XM/wCpY/8AJiunoo9t/dX3B7D+8/vOY/4uZ/1LH/kxR/xcz/qWP/Jiunoo9t/dX3B7D+8/vOY/4uZ/1LH/AJMUf8XM/wCpY/8AJiunoo9t/dX3B7D+8/vOY/4uZ/1LH/kxR/xcz/qWP/Jiunoo9t/dX3B7D+8/vOY/4uZ/1LH/AJMUf8XM/wCpY/8AJiunoo9t/dX3B7D+8/vOY/4uZ/1LH/kxR/xcz/qWP/Jiunoo9t/dX3B7D+8/vOY/4uZ/1LH/AJMUf8XM/wCpY/8AJiunoo9t/dX3B7D+8/vOY/4uZ/1LH/kxR/xcz/qWP/Jiunoo9t/dX3B7D+8/vOY/4uZ/1LH/AJMUf8XM/wCpY/8AJiunoo9t/dX3B7D+8/vOY/4uZ/1LH/kxR/xcz/qWP/Jiunoo9t/dX3B7D+8/vOY/4uZ/1LH/AJMUf8XM/wCpY/8AJiunoo9t/dX3B7D+8/vOY/4uZ/1LH/kxR/xcz/qWP/Jiunoo9t/dX3B7D+8/vOY/4uZ/1LH/AJMUf8XM/wCpY/8AJiunoo9t/dX3B7D+8/vOY/4uZ/1LH/kxR/xcz/qWP/Jiunoo9t/dX3B7D+8/vOY/4uZ/1LH/AJMUf8XM/wCpY/8AJiunoo9t/dX3B7D+8/vOY/4uZ/1LH/kxR/xcz/qWP/Jiunoo9t/dX3B7D+8/vOY/4uZ/1LH/AJMUf8XM/wCpY/8AJiunoo9t/dX3B7D+8/vOY/4uZ/1LH/kxWxo/9ufZm/4SD7B9o8w7fse/ZswMZ385zn9Kv0VMqnMrWSKjS5Xe7YUUUVmahRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUUUAFFFFABRRRQAUUV8d/tVeNX0P44RaPqnxZ8a+EdP8A+EFN7psHh+8nUXer/a5lhR4owysGUEEnb9xRvHFb4eg8RPkRlWqqjHmZ9iUV8i+FNT+MHxo8WeG/hV4z8feI/BT6T4Kt9d1ZtIlFnqN/dyyBELvtygCMhZQPvbgRkjbk2fxH+JemaVpl1rXjjU9Qj+G/xUHhbVNQS4eJdU0qQhC1yqnbK6NtHzZ+8Oc5J6PqMr25lf8Az2+/9TH62t7O39XPtCivg6f41/EmG2+JN+PFWrunxD0833glPtsoNmo1h9PVLb5v3TlJFk+TGQFbtXTtc+IR+09rHgfVfFfxs1Gx0KTw1bWg8L30kunws1pD5supByQsTsN7MOWHnE5NN5fJXvLZX+61/wAXb5CWMi7WX9a/5H2VRXwLD44+JF78c9T0bQPH3xAh1iX4m3ul2K3mqf8AFMjToptz2xWVuZ1U8RKPuMgUbiK97/bN17XNB8BeE20PWvFGnG/8ZafY3R8NXLw6jPbPFcb4YdpG52wNqnILhcipngZQqQp3+IqOKUoSnbY9/or4b8NfETx2vhTQbCT4ieLGlg+MWk6WbLWLiaLWrbTZFlxbX5wu8SbdxTLJwRnjavsv7Z2va5oPgLwm2h614o0433jLT7G6Phq5eHUZ7Z4rjfDDtI3O2BtU5BcLkUpYKUakabe4LEpwc7bHv9FfAt544+JD/Ayx1lfH3xAn0fUfibbaXpjW2p7/ABMdO8mdZbaRom5nZgNsTn74U42la6H4m+JYfDekfB2z1v4ofGfwb4a1abxC2rXes308Ovjy/L8gTrErFh5mAgKtiOTPGSRp/Z0rqPN1a27K5H1xWvbt+LsfbNFfFfgvxl8Z/H9n8MvhFrvjnxD4ej8Tvq99NroHkave6bbZNuquRlHYBiW5JXY3IzuZ4/8AG3xJ+H3gX44fDAfEfXtVfwWNCu9G1+S7ZNSgju7iAvDJOhDMcNjOQSC/YhQv7PlzcnMr/pzct/v6FfW1y81nb9bXt9x9r0V8b/BrSPGHxTg8e6UPit8WNJ8M6JLbG1/tTW0h8RQXyROZY5SoZo4Du+6QAxVccq1ekfsb6LrV58LtL+JXiH4ieMfEOoeI7aVZ7XWNXe7tbcxXMqBoEcbkJCDJLHPtWdbCKjGTctVb8VcqniHUaSjvf8D6Aor5M+J2seNfD/x6uJ/if468feFfCN1eWMfhXUNCmA0Xdgb4b9AMkswI+Yg/eP3ACK3wb1nXPEX7Q/iuLW9e+Mt6NN8bazaWf2S6eTwrb20QcpBdbidjDkKgwOYcYzVfUnye05tLX/r9RfWVz8lutj68or8+/wBnbxV8SfHPi3wfoVv8SfiR9r1i31STX313WCdPnslMkaPpu9vNeVeAWXlHUkEBSR6J4N+IHjzxhovwv+Dlz4q1eLxTY+MNQsvFN7DfSrcyWulFnlSWQNvIkSWFSSfmI71dTL5U5Ncy039NdfwJhjFNXtv/AMD/ADPsCivkP4N6zrniL9ofxXFrevfGW9Gm+NtZtLP7JdPJ4Vt7aIOUgutxOxhyFQYHMOMZrgf2YfHHxI8S/EHwHaW/j74gXV3e/wBoXevx+JdU83Sbyxid0T7AsjF5HGAGIyVdW6KrYTwDSk+bZJ/em/0BYtNpW3dvy/zPvqiiivPOwKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAK5N/htob/FNPi4bu+/tiPQT4eEHmJ9m+zGfz923bu8zdxndjHbPNdZRVRk47CcVLc82+J3wG8H/ABQ1iw8T3mq+IPD+v6dC1rDq+gagbO7NuxJMLPtYFMknGMjJweTUL/s6/DcfCK9+C9pb31poeouJrm4inBvJbgSJJ57SurAyFo15K4wAAAAAPT6K0WIqpKKk7LYh0oNttbnk17+zN8OL7/hXXmyaoo+GYjGlBJoh9p2NEw+0/u/n+eFW+XZyzdjima9+zhoes/EnUvihY/Ebx9oGpaxJZyX1ro2sJa2lwLaNY41kQRFnXavIZj95sYzXrlFNYmqvtf03f8xexpvp/Wx5NqP7NPgHU/D/AIi0CbUtcj/4SHxS/jE3sVxEtzYaizK262fy8Io2lRuDHDNz0I3vit8INF+L3hzS/DviDxBr2nnSNSg1a2v9KuI7e7W5hR1R95jYKf3hb5VBDAEEYxXd0Uvb1LqV9UP2ULNW3PGdM/ZU+HemWFnbnWvE97e23iay8V3GqXuoJPe315ahxEs8jR4aMCRshQrc/eruviD8NtD+JMXh+LXLu+gHhzXrTxDa/ZJEUvc2+7Ysm5WzGd5yBg9MEV1lFKVepKSk3qgVKEVypaHi3iz9lPwJ4qvNXu08T+LNEXWNdtvErw6Tewwpb6lDG6C4hLQs0bt5jMxDZLBSMYAra0X4BaHpereDtd1Dxv4y1/UPBM+o3Fhc6zqSXUsxvIljkWZzGGZVVRsClcEnOelen0VTxNVqzl/VrfkJUaad0v63OF+Kfwc8I/Fu204a/Nqen6ho0zXGmarpN0ba9snYAMY5ADjOBkEEcA9QDXMr+y58N1+G3iL4am916SLxXPDc6xrE16s2p3ksUqyIzzSIynBTGNmMM3GSTXsFFKOIqwioxk7IcqMJNtrU4iH4R+HLT4hal8SNPvtTtNQ1nSk0nUrWGWMWt4qcRzSIULecq4UMGAwMY5OdD4Z/D3RfhV4H0vwB4eur240/SVkSCW9dHmYPK8h3FFVTy56KOMfWunoqJVZyXK3pp+GxShFO6X9M8i8T/sy+CPGHi6bxP4g8S+L7mzuL6PUZ/D51cjSJbhMYY2+3PVQThh39aXw/+zhofhfx/fePtE+I3j61Op6zca7eaNFrCJpdxczMWcPAsQ3ryByxOFXJOK9corT6zVty82mxHsKd721PI9J/Zl8CaH4c8F+H9L1fX7eTwHqc2p6TqS3EP2vdNI7ywyN5WxonL4ZQgJCqM9c7Hhz4FeCfC/xX134xaY+oHWtfhMM8EkqG1h3eX5jxIEDK7mFSxLHOTjAOK9EopPEVXe8t/wBXf8xqjBWstv8AhjyPw/8As4aH4X8f33j7RPiN4+tTqes3Gu3mjRawiaXcXMzFnDwLEN68gcsThVyTijSf2ZfAmh+HPBfh/S9X1+3k8B6nNqek6ktxD9r3TSO8sMjeVsaJy+GUICQqjPXPrlFN4mq/tf1qv1YlRprp/X9IKKKKwNT8PKKKK/Qz48KKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigD//Z</ImageData>
+    </EmbeddedImage>
+  </EmbeddedImages>
+</Report>
